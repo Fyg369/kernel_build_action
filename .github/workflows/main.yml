@@ -31,7 +31,7 @@ jobs:
           config: cas_defconfig
           arch: arm64
           aosp-gcc: true
-          aosp-clang: true
+          #aosp-clang: true
           ksu: true
           ksu-version: main
           android-version: 12
