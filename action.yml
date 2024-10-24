@@ -393,15 +393,19 @@ runs:
          elif [ ${{ inputs.android-ndk }} = true ]; then
              COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
-         if [ ${{ inputs.aosp-clang }} = true ] || [ ${{ inputs.android-ndk }} = true ]; then
+         if [ ${{ inputs.aosp-clang }} = false ] && [ ${{ inputs.android-ndk }} = false ]; then
+             if [ ${{ inputs.ccache }} = true ]; then
+                 if [ -d $HOME/gcc-64 ]; then
+                     COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
+                 else
+                     COMMAND+=" CC='ccache $HOME/gcc-32/bin/arm-linux-androidabeihf-gcc'"
+                 fi
+             fi
+         else
              if [ ${{ inputs.ccache }} = true ]; then
                  COMMAND+=" CC='ccache clang'"
              else
                  COMMAND+=" CC=clang"
-             fi
-         else
-             if [ ${{ inputs.ccache }} = true ]; then
-                 COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
              fi
          fi
          echo "using command: ${COMMAND}"
