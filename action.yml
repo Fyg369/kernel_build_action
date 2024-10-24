@@ -382,7 +382,7 @@ runs:
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
          COMMAND="make -j$(nproc --all) ${{ inputs.config }} ARCH=${{ inputs.arch }} all ${{ inputs.extra-cmd }} O=out"
-         if [ ${{ inputs.aosp-clang }} = true ] || [ ${{ inputs.android-ndk }} = false ]; then
+         if [ ${{ inputs.aosp-clang }} = true ] || [ ! -z ${{ inputs.other-clang-url}} ]; then
               COMMAND+=" PATH=$HOME/clang/bin:$PATH"
          elif [ ${{ inputs.android-ndk }} = true ]; then
               COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
@@ -393,7 +393,7 @@ runs:
          elif [ ${{ inputs.android-ndk }} = true ]; then
              COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
-         if [ ${{ inputs.aosp-clang }} = false ] && [ ${{ inputs.android-ndk }} = false ]; then
+         if [ ${{ inputs.aosp-clang }} = true ] || [ ! -z ${{ inputs.other-clang-url}} ]; then
              if [ ${{ inputs.ccache }} = true ]; then
                  if [ -d $HOME/gcc-64 ]; then
                      COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
